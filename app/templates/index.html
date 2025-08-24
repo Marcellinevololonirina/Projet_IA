@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Enquête Policière</title>
+    <style>
+      body {
+        background: #f4f4f4;
+        font-family: "Segoe UI", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px;
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .form-container {
+        background: white;
+        padding: 30px 40px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 600px;
+      }
+
+      .form-container img {
+        max-width: 100%;
+        height: auto;
+        font-weight: bold;
+        position: center;
+        width: 20%;
+        height: 20%;
+      }
+
+      label {
+        display: block;
+        margin-top: 20px;
+        font-weight: bold;
+        color: #555;
+      }
+
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+
+      button {
+        margin-top: 30px;
+        width: 100%;
+        background-color: #007bff;
+        color: white;
+        padding: 12px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      #resultat {
+        margin-top: 30px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .guilty {
+        color: red;
+      }
+
+      .not-guilty {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Enquête Policière</h1>
+
+    <div class="form-container">
+      <img
+        src="{{ url_for('static', filename='img/justice.jpg') }}"
+        alt="Image"
+      />
+      <!-- <img src="../app/img/templates/justice.jpg" alt="Image" /> -->
+
+      <label for="suspect">Suspects :</label>
+      <select id="suspect" name="suspect">
+        <option value="john">John</option>
+        <option value="mary">Mary</option>
+        <option value="alice">Alice</option>
+        <option value="bruno">Bruno</option>
+        <option value="sophie">Sophie</option>
+      </select>
+
+      <label for="crime">Type de crime :</label>
+      <select id="crime">
+        <option value="vol">Vol</option>
+        <option value="assassinat">Assassinat</option>
+        <option value="escroquerie">Escroquerie</option>
+      </select>
+
+      <button onclick="verifier()">Vérifier</button>
+
+      <p id="resultat"></p>
+    </div>
+
+    <script>
+      async function verifier() {
+        const suspect = document.getElementById("suspect").value;
+        const crime = document.getElementById("crime").value;
+
+        const response = await fetch("/verifier", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ suspect, crime }),
+        });
+
+        const data = await response.json();
+        const resultEl = document.getElementById("resultat");
+
+        if (data.guilty) {
+          resultEl.innerHTML = ` ${suspect.toUpperCase()} est <span class="guilty">coupable</span> du crime de ${crime.toUpperCase()}.`;
+        } else {
+          resultEl.innerHTML = ` ${suspect.toUpperCase()} est <span class="not-guilty">non coupable</span> du crime de ${crime.toUpperCase()}.`;
+        }
+      }
+    </script>
+  </body>
+</html>
